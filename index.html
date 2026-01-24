@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Yaklo - Import Countdown</title>
+    <title>Yaklo - Countdown, Reminder, and Widgets</title>
     <style>
         * {
             margin: 0;
@@ -24,127 +24,115 @@
         
         .container {
             text-align: center;
-            max-width: 400px;
+            max-width: 600px;
         }
         
         .icon {
-            font-size: 80px;
-            margin-bottom: 20px;
+            font-size: 100px;
+            margin-bottom: 30px;
             animation: pulse 2s infinite;
         }
         
         @keyframes pulse {
             0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+            50% { transform: scale(1.05); }
         }
         
         h1 {
-            font-size: 32px;
-            margin-bottom: 16px;
+            font-size: 48px;
+            margin-bottom: 20px;
             font-weight: 700;
         }
         
-        p {
-            font-size: 18px;
+        .tagline {
+            font-size: 24px;
             opacity: 0.9;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
         
-        .button {
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 40px 0;
+        }
+        
+        .feature {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .feature-icon {
+            font-size: 32px;
+            margin-bottom: 10px;
+        }
+        
+        .feature h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+        
+        .feature p {
+            font-size: 14px;
+            opacity: 0.8;
+        }
+        
+        .cta {
             display: inline-block;
             background: white;
             color: #667eea;
-            padding: 16px 32px;
+            padding: 18px 36px;
             border-radius: 12px;
             text-decoration: none;
             font-weight: 600;
-            font-size: 16px;
+            font-size: 18px;
             transition: transform 0.2s;
-        }
-        
-        .button:hover {
-            transform: translateY(-2px);
-        }
-        
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
-            border-radius: 50%;
-            border-top-color: white;
-            animation: spin 1s ease-in-out infinite;
             margin-top: 20px;
         }
         
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .cta:hover {
+            transform: translateY(-2px);
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="icon">⏰</div>
-        <h1>Opening Yaklo...</h1>
-        <p id="message">Redirecting you to the app</p>
-        <div class="loading" id="loader"></div>
-        <a href="#" id="appStoreLink" class="button" style="display: none;">
-            Download Yaklo
+        <h1>Yaklo</h1>
+        <p class="tagline">Beautiful Countdowns & Reminders for iOS</p>
+        
+        <div class="features">
+            <div class="feature">
+                <div class="feature-icon">📅</div>
+                <h3>Smart Repeats</h3>
+                <p>Daily, weekly, custom schedules</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🔔</div>
+                <h3>Notifications</h3>
+                <p>Never miss important moments</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🎨</div>
+                <h3>Beautiful Design</h3>
+                <p>Stunning backgrounds & themes</p>
+            </div>
+            <div class="feature">
+                <div class="feature-icon">🔗</div>
+                <h3>Easy Sharing</h3>
+                <p>Share countdowns with friends</p>
+            </div>
+        </div>
+        
+        <a href="https://apps.apple.com/app/yaklo/id123456789" class="cta">
+            Download on the App Store
         </a>
+        
+        <p style="margin-top: 30px; font-size: 14px; opacity: 0.7;">
+            Available on iPhone and iPad
+        </p>
     </div>
-
-    <script>
-        // Get the data parameter from URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const data = urlParams.get('data');
-        
-        // Your App Store link
-        const APP_STORE_URL = 'https://apps.apple.com/app/yaklo/id123456789'; // Replace with actual ID
-        
-        // Create deep link
-        const deepLink = `yaklo://import?data=${data}`;
-        
-        // Function to detect if user is on iOS
-        function isIOS() {
-            return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        }
-        
-        // Function to attempt opening the app
-        function openApp() {
-            if (!isIOS()) {
-                // Not iOS - show message
-                document.getElementById('message').textContent = 'Yaklo is only available on iOS';
-                document.getElementById('loader').style.display = 'none';
-                return;
-            }
-            
-            // Try to open the app
-            window.location.href = deepLink;
-            
-            // Set a timeout to redirect to App Store if app doesn't open
-            setTimeout(() => {
-                // If we're still here after 2 seconds, app probably isn't installed
-                document.getElementById('message').textContent = 'App not installed?';
-                document.getElementById('loader').style.display = 'none';
-                document.getElementById('appStoreLink').style.display = 'inline-block';
-                document.getElementById('appStoreLink').href = APP_STORE_URL;
-            }, 2000);
-        }
-        
-        // Try to open app immediately
-        openApp();
-        
-        // Also handle visibility change (in case user comes back from the app)
-        document.addEventListener('visibilitychange', function() {
-            if (!document.hidden) {
-                // User came back, show App Store link
-                setTimeout(() => {
-                    document.getElementById('message').textContent = 'App not installed?';
-                    document.getElementById('loader').style.display = 'none';
-                    document.getElementById('appStoreLink').style.display = 'inline-block';
-                }, 500);
-            }
-        });
-    </script>
 </body>
 </html>
