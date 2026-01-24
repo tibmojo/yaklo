@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yaklo - Import Countdown</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            padding: 20px;
+        }
+        
+        .container {
+            text-align: center;
+            max-width: 400px;
+        }
+        
+        .icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+        
+        h1 {
+            font-size: 32px;
+            margin-bottom: 16px;
+            font-weight: 700;
+        }
+        
+        p {
+            font-size: 18px;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+        
+        .button {
+            display: inline-block;
+            background: white;
+            color: #667eea;
+            padding: 16px 32px;
+            border-radius: 12px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+        
+        .button:hover {
+            transform: translateY(-2px);
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+            margin-top: 20px;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">⏰</div>
+        <h1>Opening Yaklo...</h1>
+        <p id="message">Redirecting you to the app</p>
+        <div class="loading" id="loader"></div>
+        <a href="#" id="appStoreLink" class="button" style="display: none;">
+            Download Yaklo
+        </a>
+    </div>
+
+    <script>
+        // Get the data parameter from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const data = urlParams.get('data');
+        
+        // Your App Store link
+        const APP_STORE_URL = 'https://apps.apple.com/app/yaklo/id123456789'; // Replace with actual ID
+        
+        // Create deep link
+        const deepLink = `yaklo://import?data=${data}`;
+        
+        // Function to detect if user is on iOS
+        function isIOS() {
+            return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+        }
+        
+        // Function to attempt opening the app
+        function openApp() {
+            if (!isIOS()) {
+                // Not iOS - show message
+                document.getElementById('message').textContent = 'Yaklo is only available on iOS';
+                document.getElementById('loader').style.display = 'none';
+                return;
+            }
+            
+            // Try to open the app
+            window.location.href = deepLink;
+            
+            // Set a timeout to redirect to App Store if app doesn't open
+            setTimeout(() => {
+                // If we're still here after 2 seconds, app probably isn't installed
+                document.getElementById('message').textContent = 'App not installed?';
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('appStoreLink').style.display = 'inline-block';
+                document.getElementById('appStoreLink').href = APP_STORE_URL;
+            }, 2000);
+        }
+        
+        // Try to open app immediately
+        openApp();
+        
+        // Also handle visibility change (in case user comes back from the app)
+        document.addEventListener('visibilitychange', function() {
+            if (!document.hidden) {
+                // User came back, show App Store link
+                setTimeout(() => {
+                    document.getElementById('message').textContent = 'App not installed?';
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('appStoreLink').style.display = 'inline-block';
+                }, 500);
+            }
+        });
+    </script>
+</body>
+</html>
