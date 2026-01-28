@@ -96,25 +96,15 @@
     </div>
 
     <script>
-        // Get the data parameter from URL
         const urlParams = new URLSearchParams(window.location.search);
         const data = urlParams.get('data');
-        
-        // Your App Store link - UPDATE THIS WHEN YOU PUBLISH
         const APP_STORE_URL = 'https://apps.apple.com/app/yaklo/id123456789';
-        
-        // Create deep link
         const deepLink = `yaklo://import?data=${data}`;
-        
-        // Function to detect if user is on iOS
         function isIOS() {
             return /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
         }
-        
-        // Function to attempt opening the app
         function openApp() {
             if (!isIOS()) {
-                // Not iOS - show message
                 document.getElementById('message').textContent = 'Yaklo is only available on iOS';
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('appStoreLink').style.display = 'inline-block';
@@ -122,32 +112,22 @@
                 document.getElementById('appStoreLink').textContent = 'View on App Store';
                 return;
             }
-            
-            // Try to open the app
             window.location.href = deepLink;
-            
-            // Set a timeout to redirect to App Store if app doesn't open
             setTimeout(() => {
-                // If we're still here after 2.5 seconds, app probably isn't installed
                 document.getElementById('message').textContent = 'App not installed?';
                 document.getElementById('loader').style.display = 'none';
                 document.getElementById('appStoreLink').style.display = 'inline-block';
                 document.getElementById('appStoreLink').href = APP_STORE_URL;
             }, 2500);
         }
-        
-        // Try to open app immediately
         if (data) {
             openApp();
         } else {
             document.getElementById('message').textContent = 'Invalid share link';
             document.getElementById('loader').style.display = 'none';
         }
-        
-        // Also handle visibility change (in case user comes back from the app)
         document.addEventListener('visibilitychange', function() {
             if (!document.hidden) {
-                // User came back, show App Store link
                 setTimeout(() => {
                     document.getElementById('message').textContent = 'App not installed?';
                     document.getElementById('loader').style.display = 'none';
